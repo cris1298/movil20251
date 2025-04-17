@@ -56,7 +56,7 @@ public class FormColorActivity extends AppCompatActivity {
         setUpButtonSave();
         setUpButtonDelete();
 
-
+        // los getIntent() me permiten obtener la información que se envió desde la actividad anterior
         Intent intent = getIntent();
         String colorName = intent.getStringExtra("colorName");
         String colorHex = intent.getStringExtra("colorHex");
@@ -113,6 +113,7 @@ public class FormColorActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Color> call, Response<Color> response) {
                 if (response.isSuccessful()) {
+                    // finish: Termina la actividad actual (es como hacer atrás en la pantalla)
                     finish();
                     Toast.makeText(getApplicationContext(), "Color creado", Toast.LENGTH_LONG).show();
                 } else {

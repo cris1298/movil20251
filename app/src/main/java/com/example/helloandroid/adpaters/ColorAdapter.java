@@ -51,6 +51,8 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ColorViewHol
             public void onClick(View v) {
                 Toast.makeText(v.getContext(), "Color: " + color.nombre, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(v.getContext(), FormColorActivity.class);
+
+                // los extras me permiten enviar información entre actividades
                 intent.putExtra("colorId", color.id);
                 intent.putExtra("colorName", color.nombre);
                 intent.putExtra("colorHex", color.colorHex);

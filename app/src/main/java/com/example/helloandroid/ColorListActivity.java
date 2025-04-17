@@ -62,9 +62,6 @@ public class ColorListActivity extends AppCompatActivity {
         rvColors.setLayoutManager(new LinearLayoutManager(this));
 
         setUpRecyclerView();
-
-        loadMoreColors();
-
     }
 
 
@@ -74,6 +71,11 @@ public class ColorListActivity extends AppCompatActivity {
 
         Toast.makeText(getApplicationContext(), "ColorListActivity onResume", Toast.LENGTH_SHORT).show();
 
+        data.clear();
+        currentPage = 1;
+        adapter.notifyDataSetChanged(); // notifica al adapter que los datos han cambiado
+
+        loadMoreColors();
     }
 
     private void loadMoreColors() {
@@ -92,13 +94,13 @@ public class ColorListActivity extends AppCompatActivity {
 
                 if (!response.isSuccessful()) return;
                 if (response.body() == null) return;
-                if (response.body().size() == 0) {
+                if (response.body().isEmpty()) {
                     isLastPage = true;
                     return;
                 }
 
 
-                data.addAll(response.body());
+                data.addAll(response.body()); // añade los nuevos colores a la lista
                 adapter.notifyDataSetChanged();
             }
 
@@ -115,6 +117,8 @@ public class ColorListActivity extends AppCompatActivity {
         adapter = new ColorAdapter(data);
         rvColors.setAdapter(adapter);
 
+        // Scroll Listener nos permite detectar cuando el usuario hace scroll y llega al final de la lista
+        // para cargar más datos
         rvColors.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {

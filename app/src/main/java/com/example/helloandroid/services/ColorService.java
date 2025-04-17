@@ -16,7 +16,13 @@ import retrofit2.http.Query;
 
 public interface ColorService {
 
-//    https://67ff051e58f18d7209efd099.mockapi.io/colores/limit=10&page=3
+//    https://67ff051e58f18d7209efd099.mockapi.io/colores/?limit=10&page=3
+
+    // URL Principal -> https://67ff051e58f18d7209efd099.mockapi.io/colores/
+        // URL BASE -> https://67ff051e58f18d7209efd099.mockapi.io
+        // PATH -> /colores/1/
+    // Query Parameters -> ?limit=10&page=1
+    // BODY -> {"name":"Rojo","hex":"#FF0000"} --> Clase Color
 
     @GET("/colores")
     Call< List<Color> > getColors(@Query("limit") int limit, @Query("page") int page);
@@ -24,6 +30,7 @@ public interface ColorService {
     @POST("/colores")
     Call<Color> create(@Body Color color);
 
+    // {property} -> Representa un valor dinámico
     @PUT("/colores/{id}")
     Call<Color> update(@Path("id") int id, @Body Color color);
 
