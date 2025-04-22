@@ -99,7 +99,6 @@ public class ColorListActivity extends AppCompatActivity {
                     return;
                 }
 
-
                 data.addAll(response.body()); // añade los nuevos colores a la lista
                 adapter.notifyDataSetChanged();
             }
