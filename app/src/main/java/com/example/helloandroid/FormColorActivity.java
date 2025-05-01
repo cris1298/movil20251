@@ -1,7 +1,9 @@
 package com.example.helloandroid;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -137,11 +139,21 @@ public class FormColorActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Color> call, Response<Color> response) {
                 if (response.isSuccessful()) {
+
+                    Intent intent = new Intent();
+                    intent.putExtra("colorId", colorId);
+                    intent.putExtra("colorName", color.nombre);
+                    setResult(Activity.RESULT_OK, intent);
+
+                    Log.d("MAIN_APP", "setResult: " + colorId);
                     finish();
-                    Toast.makeText(getApplicationContext(), "Color actualizado", Toast.LENGTH_LONG).show();
+
+
                 } else {
-                    Toast.makeText(getApplicationContext(), "Error al crear color", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Error al actualizar color", Toast.LENGTH_LONG).show();
                 }
+
+
             }
 
             @Override

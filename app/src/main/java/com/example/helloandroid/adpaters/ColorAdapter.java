@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,8 +21,10 @@ import java.util.List;
 public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ColorViewHolder> {
 
     private List<Color> data;
-    public ColorAdapter(List<Color> data) {
+    private ActivityResultLauncher<Intent> launcher;
+    public ColorAdapter(List<Color> data, ActivityResultLauncher<Intent> launcher) {
         this.data = data;
+        this.launcher = launcher;
     }
 
     @NonNull
@@ -56,8 +59,8 @@ public class ColorAdapter extends RecyclerView.Adapter<ColorAdapter.ColorViewHol
                 intent.putExtra("colorId", color.id);
                 intent.putExtra("colorName", color.nombre);
                 intent.putExtra("colorHex", color.colorHex);
-
-                v.getContext().startActivity(intent);
+                launcher.launch(intent);
+//                v.getContext().startActivity(intent);
             }
         });
 

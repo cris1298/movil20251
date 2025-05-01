@@ -1,10 +1,16 @@
 package com.example.helloandroid;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -38,6 +44,8 @@ public class ColorListActivity extends AppCompatActivity {
     List<Color> data = new ArrayList<>();
     ColorAdapter adapter;
 
+    private ActivityResultLauncher<Intent> launcher;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,19 +57,42 @@ public class ColorListActivity extends AppCompatActivity {
             return insets;
         });
 
+        Log.d("MAIN_APP", "onCreate");
+
+
+        launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+            @Override
+            public void onActivityResult(ActivityResult result) {
+
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    Intent iData = result.getData();
+                    if (iData != null) {
+                        int colorId = iData.getIntExtra("colorId", 0);
+                        String colorName = iData.getStringExtra("colorName");
+                        Color color = data.stream().filter(c -> c.id == colorId).findFirst().orElse(null);
+                        color.nombre = colorName;
+                        adapter.notifyDataSetChanged();
+                        Log.d("MAIN_APP", "onActivityResult: " + colorId);
+                    }
+                }
+            }
+        });
+
 
         Toast.makeText(getApplicationContext(), "ColorListActivity onCreate", Toast.LENGTH_SHORT).show();
 
         FloatingActionButton button = findViewById(R.id.fabGoToColorForm);
         button.setOnClickListener(v -> {
             Intent intent = new Intent(this, FormColorActivity.class);
-            startActivity(intent);
+            launcher.launch(intent);
+
         });
 
         rvColors = findViewById(R.id.rvListColors);
         rvColors.setLayoutManager(new LinearLayoutManager(this));
 
         setUpRecyclerView();
+        loadMoreColors();
     }
 
 
@@ -69,13 +100,13 @@ public class ColorListActivity extends AppCompatActivity {
     protected  void onResume() {
         super.onResume();
 
-        Toast.makeText(getApplicationContext(), "ColorListActivity onResume", Toast.LENGTH_SHORT).show();
-
-        data.clear();
-        currentPage = 1;
-        adapter.notifyDataSetChanged(); // notifica al adapter que los datos han cambiado
-
-        loadMoreColors();
+//        Toast.makeText(getApplicationContext(), "ColorListActivity onResume", Toast.LENGTH_SHORT).show();
+//
+//        data.clear();
+//        currentPage = 1;
+//        adapter.notifyDataSetChanged(); // notifica al adapter que los datos han cambiado
+//
+//        loadMoreColors();
     }
 
     private void loadMoreColors() {
@@ -113,7 +144,7 @@ public class ColorListActivity extends AppCompatActivity {
 
     private void setUpRecyclerView() {
 
-        adapter = new ColorAdapter(data);
+        adapter = new ColorAdapter(data, launcher);
         rvColors.setAdapter(adapter);
 
         // Scroll Listener nos permite detectar cuando el usuario hace scroll y llega al final de la lista

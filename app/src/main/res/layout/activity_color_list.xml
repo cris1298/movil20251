@@ -7,10 +7,31 @@
     android:layout_height="match_parent"
     tools:context=".ColorListActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvListColors"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/searchView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:iconifiedByDefault="false"
+            app:queryHint="Buscar Colores" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvListColors"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
+
+    </LinearLayout>
+
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabGoToColorForm"
