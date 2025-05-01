@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 public class Color {
 
 
-    public int id;
+    public String id;
 
     @SerializedName("name")
     public String nombre;
