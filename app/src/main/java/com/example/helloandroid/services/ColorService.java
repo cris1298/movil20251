@@ -25,7 +25,7 @@ public interface ColorService {
     // BODY -> {"name":"Rojo","hex":"#FF0000"} --> Clase Color
 
     @GET("/colores")
-    Call< List<Color> > getColors(@Query("limit") int limit, @Query("page") int page);
+    Call< List<Color> > getColors(@Query("limit") int limit, @Query("page") int page,  @Query("name") String name);
 
     @POST("/colores")
     Call<Color> create(@Body Color color);

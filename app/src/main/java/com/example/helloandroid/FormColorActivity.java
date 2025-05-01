@@ -1,9 +1,7 @@
 package com.example.helloandroid;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,6 +15,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.helloandroid.entities.Color;
 import com.example.helloandroid.services.ColorService;
+import com.google.gson.Gson;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -115,7 +114,12 @@ public class FormColorActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Color> call, Response<Color> response) {
                 if (response.isSuccessful()) {
-                    // finish: Termina la actividad actual (es como hacer atrás en la pantalla)
+                    Intent intent = new Intent();
+                    Color createdColor = response.body();
+
+                    String colorJSON = new Gson().toJson(createdColor);
+                    intent.putExtra("colorJSON", colorJSON);
+                    setResult(RESULT_OK, intent);
                     finish();
                     Toast.makeText(getApplicationContext(), "Color creado", Toast.LENGTH_LONG).show();
                 } else {
@@ -139,21 +143,17 @@ public class FormColorActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Color> call, Response<Color> response) {
                 if (response.isSuccessful()) {
-
                     Intent intent = new Intent();
-                    intent.putExtra("colorId", colorId);
-                    intent.putExtra("colorName", color.nombre);
-                    setResult(Activity.RESULT_OK, intent);
+                    Color updatedColor = response.body();
 
-                    Log.d("MAIN_APP", "setResult: " + colorId);
+                    String colorJSON = new Gson().toJson(updatedColor);
+                    intent.putExtra("colorJSON", colorJSON);
+                    setResult(RESULT_OK, intent);
                     finish();
-
-
+                    Toast.makeText(getApplicationContext(), "Color actualizado", Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(getApplicationContext(), "Error al actualizar color", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Error al crear color", Toast.LENGTH_LONG).show();
                 }
-
-
             }
 
             @Override
