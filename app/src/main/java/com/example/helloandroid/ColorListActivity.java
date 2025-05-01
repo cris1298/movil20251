@@ -21,6 +21,11 @@ import com.example.helloandroid.entities.Color;
 import com.example.helloandroid.entities.ColorResponse;
 import com.example.helloandroid.services.ColorService;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -71,7 +76,7 @@ public class ColorListActivity extends AppCompatActivity {
         rvColors.setLayoutManager(new LinearLayoutManager(this));
 
         setUpRecyclerView();
-        setUpSearchView();
+//        setUpSearchView();
 
         loadMoreColors(busqueda);
     }
@@ -123,34 +128,56 @@ public class ColorListActivity extends AppCompatActivity {
 
     private void loadMoreColors(String query) {
 
-        isLoading = true;
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference ref = database.getReference("colors");
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://67ff051e58f18d7209efd099.mockapi.io")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        ColorService service = retrofit.create(ColorService.class);
-        service.getColors(20, currentPage, query).enqueue(new Callback<List<Color>>() {
+        ref.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onResponse(Call<List<Color>> call, Response<List<Color>> response) {
-                isLoading = false;
-
-                if (!response.isSuccessful()) return;
-                if (response.body() == null) return;
-                if (response.body().isEmpty()) {
-                    isLastPage = true;
-                    return;
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for (DataSnapshot colorSnapshot : snapshot.getChildren()) {
+                    Color color = colorSnapshot.getValue(Color.class);
+                    if (color!= null) {
+                        colorsData.add(color);
+                    }
                 }
-
-                colorsData.addAll(response.body()); // añade los nuevos colores a la lista
                 adapter.notifyDataSetChanged();
             }
 
             @Override
-            public void onFailure(Call<List<Color>> call, Throwable throwable) {
-                isLoading = false;
+            public void onCancelled(@NonNull DatabaseError error) {
+
             }
         });
+
+
+//        isLoading = true;
+//
+//        Retrofit retrofit = new Retrofit.Builder()
+//                .baseUrl("https://67ff051e58f18d7209efd099.mockapi.io")
+//                .addConverterFactory(GsonConverterFactory.create())
+//                .build();
+//        ColorService service = retrofit.create(ColorService.class);
+//        service.getColors(20, currentPage, query).enqueue(new Callback<List<Color>>() {
+//            @Override
+//            public void onResponse(Call<List<Color>> call, Response<List<Color>> response) {
+//                isLoading = false;
+//
+//                if (!response.isSuccessful()) return;
+//                if (response.body() == null) return;
+//                if (response.body().isEmpty()) {
+//                    isLastPage = true;
+//                    return;
+//                }
+//
+//                colorsData.addAll(response.body()); // añade los nuevos colores a la lista
+//                adapter.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onFailure(Call<List<Color>> call, Throwable throwable) {
+//                isLoading = false;
+//            }
+//        });
     }
 
     private void setUpRecyclerView() {
@@ -160,33 +187,33 @@ public class ColorListActivity extends AppCompatActivity {
 
         // Scroll Listener nos permite detectar cuando el usuario hace scroll y llega al final de la lista
         // para cargar más datos
-        rvColors.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-
-                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-                if (layoutManager == null) return;
-
-                int visibleItemCount = layoutManager.getChildCount();
-                int totalItemCount = layoutManager.getItemCount();
-                int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
-
-                if (!isLoading && !isLastPage) {
-                    if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
-                            && firstVisibleItemPosition >= 0) {
-
-                        currentPage++;
-                        loadMoreColors(busqueda);
-                    }
-                }
-            }
-        });
+//        rvColors.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+//                super.onScrollStateChanged(recyclerView, newState);
+//            }
+//
+//            @Override
+//            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+//                super.onScrolled(recyclerView, dx, dy);
+//
+//                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+//                if (layoutManager == null) return;
+//
+//                int visibleItemCount = layoutManager.getChildCount();
+//                int totalItemCount = layoutManager.getItemCount();
+//                int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+//
+//                if (!isLoading && !isLastPage) {
+//                    if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+//                            && firstVisibleItemPosition >= 0) {
+//
+//                        currentPage++;
+//                        loadMoreColors(busqueda);
+//                    }
+//                }
+//            }
+//        });
     }
 
     private void setUpSearchView() {

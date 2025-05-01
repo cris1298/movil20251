@@ -15,6 +15,9 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.helloandroid.entities.Color;
 import com.example.helloandroid.services.ColorService;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 
 import retrofit2.Call;
@@ -110,28 +113,38 @@ public class FormColorActivity extends AppCompatActivity {
         color.nombre = etColorName.getText().toString();
         color.colorHex = etColorHex.getText().toString();
 
-        service.create(color).enqueue(new Callback<>() {
-            @Override
-            public void onResponse(Call<Color> call, Response<Color> response) {
-                if (response.isSuccessful()) {
-                    Intent intent = new Intent();
-                    Color createdColor = response.body();
-
-                    String colorJSON = new Gson().toJson(createdColor);
-                    intent.putExtra("colorJSON", colorJSON);
-                    setResult(RESULT_OK, intent);
-                    finish();
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference();
+        myRef.child("colors").push().setValue(color)
+                .addOnSuccessListener(unused -> {
                     Toast.makeText(getApplicationContext(), "Color creado", Toast.LENGTH_LONG).show();
-                } else {
+                }).addOnFailureListener(f -> {
                     Toast.makeText(getApplicationContext(), "Error al crear color", Toast.LENGTH_LONG).show();
-                }
-            }
+                });
 
-            @Override
-            public void onFailure(Call<Color> call, Throwable throwable) {
-                Toast.makeText(getApplicationContext(), "Error de red", Toast.LENGTH_LONG).show();
-            }
-        });
+
+//        service.create(color).enqueue(new Callback<>() {
+//            @Override
+//            public void onResponse(Call<Color> call, Response<Color> response) {
+//                if (response.isSuccessful()) {
+//                    Intent intent = new Intent();
+//                    Color createdColor = response.body();
+//
+//                    String colorJSON = new Gson().toJson(createdColor);
+//                    intent.putExtra("colorJSON", colorJSON);
+//                    setResult(RESULT_OK, intent);
+//                    finish();
+//                    Toast.makeText(getApplicationContext(), "Color creado", Toast.LENGTH_LONG).show();
+//                } else {
+//                    Toast.makeText(getApplicationContext(), "Error al crear color", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Color> call, Throwable throwable) {
+//                Toast.makeText(getApplicationContext(), "Error de red", Toast.LENGTH_LONG).show();
+//            }
+//        });
     }
 
     private void update() {
