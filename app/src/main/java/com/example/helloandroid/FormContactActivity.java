@@ -24,7 +24,7 @@ public class FormContactActivity extends AppCompatActivity {
             return insets;
         });
 
-        setupView();
+
     }
 
 
