@@ -1,5 +1,7 @@
 package com.example.helloandroid;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
@@ -19,6 +21,8 @@ public class LoginActivity extends AppCompatActivity {
 
     ActivityLoginBinding binding;
 
+    SharedPreferences preferences;
+
     private User userInput = new User();
 
     @Override
@@ -35,7 +39,24 @@ public class LoginActivity extends AppCompatActivity {
             return insets;
         });
 
+        // verificar si estoy logueado
+        preferences = getSharedPreferences("com.example.helloandroid",MODE_PRIVATE);
+        boolean isAuntenticate = preferences.getBoolean("ESTA AUTENTIFICADO",false);
+        if (isAuntenticate){
+            openMainActivity();
+            return;
+        }
+        // Si-> redirecciono a otra actividad
+        // No -> no hacemos nada
+
+
         setupUI();
+    }
+
+    private void openMainActivity() {
+        Intent intent = new Intent(this, FormContactActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     private void setupBinding() {
@@ -48,6 +69,17 @@ public class LoginActivity extends AppCompatActivity {
             Log.i("MAIN_APP LoginActivity", "Login button clicked");
             Log.i("MAIN_APP LoginActivity", "User email: " + userInput.email);
             Log.i("MAIN_APP LoginActivity", "User password: " + userInput.password);
+
+
+            if(true){
+                SharedPreferences.Editor editor = preferences.edit();
+                editor.putBoolean("ESTA AUNTENTICADO", true);
+                editor.putString("USUARIO","email@email");
+                editor.apply();
+                openMainActivity();
+            }
+
+
         });
     }
 }
