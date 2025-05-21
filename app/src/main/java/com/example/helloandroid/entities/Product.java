@@ -1,14 +1,11 @@
 package com.example.helloandroid.entities;
 
-import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "users")
-public class User {
-
+@Entity(tableName = "products")
+public class Product {
     @PrimaryKey(autoGenerate = true)
     public int id;
-    public String email;
-    public String password;
+    public String name;
 }
