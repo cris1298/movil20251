@@ -18,5 +18,5 @@ public interface UserDao {
     User findById(int id);
 
     @Insert
-    User insert(User user);
+    void insert(User user);
 }
