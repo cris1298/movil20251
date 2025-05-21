@@ -31,10 +31,7 @@ public class UserActivity extends AppCompatActivity {
         });
 
 
-        AppDatabase db = Room.databaseBuilder(getApplicationContext(),
-                AppDatabase.class, "helloandroid_db")
-                .allowMainThreadQueries()
-                .build();
+       AppDatabase db = AppDatabase.getInstance(this);
 
 
         UserDao userDao = db.userDao();
