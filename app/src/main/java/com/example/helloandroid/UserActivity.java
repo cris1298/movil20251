@@ -12,12 +12,18 @@ import androidx.room.Room;
 
 import com.example.helloandroid.daos.UserDao;
 import com.example.helloandroid.database.AppDatabase;
+import com.example.helloandroid.entities.City;
 import com.example.helloandroid.entities.User;
+import com.example.helloandroid.repositories.UserRepositorio;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UserActivity extends AppCompatActivity {
+
+    UserRepositorio userRepository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,24 +36,23 @@ public class UserActivity extends AppCompatActivity {
             return insets;
         });
 
+        userRepository = new UserRepositorio(AppDatabase.getInstance(this));
 
-       AppDatabase db = AppDatabase.getInstance(this);
+
+        for (User user: userRepository.getAll()) {
+            Log.i("MAIN_APP UserActivity", user.email);
+            Log.i("MAIN_APP UserActivity", user.city.name);
+        }
 
 
-        UserDao userDao = db.userDao();
-//        User user1 = new User();
-//        user1.email = "email1@gmail.com";
-//        user1.password = "123456";
-//        userDao.insert(user1);
-//
-//        User user2 = new User();
-//        user2.email = "email2@gmail.com";
-//        user2.password = "123456";
-//        userDao.insert(user2);
+        //Log.i("MAIN_APP UserActivity", new Gson().toJson(db.userDao().getAll()));
 
-        List<User> users = userDao.getAll();
+    }
 
-        Log.i("MAIN_APP UserActivity", new Gson().toJson(users));
+    public void fillData(){
+//        db.cityDao().insert(new City("Lima"));
+//        db.cityDao().insert(new City("Cajamarca"));
+
 
     }
 }
